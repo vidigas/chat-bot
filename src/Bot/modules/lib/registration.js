@@ -1,8 +1,8 @@
 import { Vocabulary } from '../../vocabulary/index';
 import { createUser } from '../../repositories/users.repository';
 
-export const proceedWithRegistration =  async (phone) => {
-	
+export const proceedWithRegistration =  async (state ,phone) => {
+	if(state === 'registered') console.log('EAE PORRA')
 	//filter for testing 	
 		try {
 	
@@ -11,7 +11,7 @@ export const proceedWithRegistration =  async (phone) => {
 			
 			// send welcome msg
 
-			return( Vocabulary('intro', phone));	
+			return( Vocabulary(state , phone));	
 	
 		} catch(err) {
 	

@@ -1,25 +1,32 @@
 import { getUser } from './repositories/users.repository';
-import { proceedWithRegistration, proceedWithQuestion } from './modules';
+import { proceedWithRegistration, proceedWithQuestion, proceedWithProfile } from './modules';
+
+import color from 'colors';
 
 export default class Bot {
 	
 	constructor(user){
-		this.user = user;
+		this.userPhone = user;
 	}
 
 	async processMessage(input){
 	
 	try {
 		
-		var user =  await getUser(this.user);
+		var userData =  await getUser(this.userPhone.trim());
+		
+		console.log(color.yellow('\n\n','User data : '), color.red(userData.data));
+		
+		const state = userData.data.state;
 
-		if(user.data.notRegistered)  return await proceedWithRegistration(this.user.trim());
-
-		//TODO: PROCEED WITH QUESTION  -> READ THE MSG AND PARSE TO SE IF ITS A QUESTION THEN SEND TO TEACHERS GROUP
-		return await proceedWithQuestion(this.user.trim());
+		switch ( state ) {
+			case 'notRegistered' : return await proceedWithRegistration(state, this.userPhone.trim() );
+			case 'registered' : return await proceedWithProfile(state, this.userPhone.trim(), input);
+			default : return await proceedWithDefaultMessage(state, userData.data.phone);
+		}
 
 	} catch(err) {
-		console.log('err');
+		console.log(err);
 	}
 
 		return

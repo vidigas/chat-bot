@@ -1,7 +1,7 @@
 import strftime from 'strftime';
 import color from 'colors';
 
-export const log = (message) => {
+export const Logger = (message) => {
   var dateTime = strftime('%Y-%m-%d %H:%M:%S:%L') + ' -';
   var stacklist = (new Error()).stack.split('\n');
   var parseError = stacklist[2].split('/');

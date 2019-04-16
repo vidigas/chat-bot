@@ -4,11 +4,11 @@ import color from 'colors';
 import Bot from './Bot';
 import { log } from './Bot/helper';
 
-//the class App is used to develop the bot locally
+//the class ChatInterface is used to develop the bot locally
 
 //it will become a POST request that receives an user and a message and returns the answer
 
-class App {
+class ChatInterface {
 	constructor(user){
 
 		this.user = user.toString();
@@ -41,15 +41,15 @@ class App {
 		stdout.write(color.green(output +  '\n'));
 	}
 
-async listen(){
+	async listen(){
 
-	const stdin = process.stdin;
-	stdin.resume();
+		const stdin = process.stdin;
+		stdin.resume();
 
-	await stdin.once('data', await this.processMessage.bind(this));
+		await stdin.once('data', await this.processMessage.bind(this));
 }
 
-async processMessage (input) {
+	async processMessage (input) {
 		input = input.toString().trim();
 		
 		const bot = new Bot(this.user)
@@ -81,7 +81,7 @@ async processMessage (input) {
 
 	 stdin.once('data', (user) => {
 
-		var app = new App( user );
+		var app = new ChatInterface( user );
 
 	stdout.write(color.red('\n\n\n' + 'Inicializando chat . . . Comece a conversa' + '\n\n\n'));
 
