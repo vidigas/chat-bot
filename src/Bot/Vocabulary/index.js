@@ -4,12 +4,13 @@ import { defaultMessage } from './lib/defaultMessage';
 
 
 
-export const  Vocabulary = () => { return ( {
+export const  Vocabulary = (method, user) => { 
 
-	
-	intro: (user) => { return intro(user) } ,
-	default: (user) => { return defaultMessage(user) }
-		
-	})
+	switch (method) {
+		case 'intro': return intro(user);
+		case 'registration':
+		default : return defaultMessage(user);
+	}
+
 }
 
