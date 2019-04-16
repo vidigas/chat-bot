@@ -5,7 +5,7 @@ export const proceedWithQuestion =  async (phone) => {
 
 //TODO open msg
 	
-	return( Vocabulary('defaultMessage', phone));	
+	return( Vocabulary().default(phone));	
 
 	 
 }

@@ -11,7 +11,7 @@ export const proceedWithRegistration =  async (phone) => {
 			
 			// send welcome msg
 
-			return( Vocabulary('intro', phone));	
+			return( Vocabulary().intro('intro', phone));	
 	
 		} catch(err) {
 	
