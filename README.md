@@ -4,6 +4,9 @@ this awesome chatbot work as a microservice for a larger project.
 
 you will need to clone and run the api project as well
 
+![Alt text](Public/plantao-zap-chat-bot.jpg?raw=true "Fluxogram")
+
+
 
 - [Clone Api](#api)
 
@@ -13,7 +16,7 @@ you will need to clone and run the api project as well
 # Clone Api
 ## Install:
 ```bash
-git clone git@github.com:vidigas/plantao-zap-api.git
+git clone git@github.com:vidigas/plantao_zap_api.git
 cd plantao-zap-api
 npm install
 ```
@@ -25,6 +28,12 @@ npm run dev
 
 
 # Run Bot
+
+You have two optins to run this bot.
+
+One is runnig in dev mode to interact with the bot from the terminal window.
+
+The other is to run in api mode and consume through a post request.
 
 ## Install
 ```bash
