@@ -10,24 +10,27 @@ export default class Bot {
 	}
 
 	async processMessage(input){
-	
+
+// primera etapa do processo - Pega o usuário.
 	try {
 		
+		//avalia se está registrado
+
 		var userData =  await getUser(this.userPhone.trim());
-		
+
 		console.log(color.yellow('\n\n','User data : '), color.red(userData.data));
 		
 		const state = userData.data.state;
 
 		var response ;
 
-		switch ( state ) {
-			case 'notRegistered' : response = await proceedWithRegistration(state, this.userPhone.trim() );
-			break;
-			case 'registered' : response = await proceedWithProfile(state, this.userPhone.trim(), input);
-			break;
-			default : response = await proceedWithDefaultMessage(state, userData.data.phone);
-		}
+		
+		// Verificar se é uma questão de ordem?
+
+
+		// Roteador Contexto (vale a pena )
+		const router = new Router(context,input);
+		Bot.Router(context,input)
 
 		return response;
 

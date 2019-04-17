@@ -23,7 +23,7 @@ app.post('/message/:phone', async (req, res) => {
 
 		if(!response){
 			
-			var data = {	user: req.params.user , action: 'send', body: 'Desculpa, não escutei. Pode repetir. :)' }
+			var data = {	user: req.params.user , action: 'send',canal :'whatsapp' ,body: 'Desculpa, não escutei. Pode repetir. :)' }
 		 
 		  res.status(200).send(data)
 
@@ -31,8 +31,9 @@ app.post('/message/:phone', async (req, res) => {
 
 		}
 
+		//bot queue emitter vai entrar aqui, e vai direcionar as mensagens baseadas no canal e usuario.
+		
 		res.status(200).send(response)
-
 
 	})
 
