@@ -19,11 +19,17 @@ export default class Bot {
 		
 		const state = userData.data.state;
 
+		var response ;
+
 		switch ( state ) {
-			case 'notRegistered' : return await proceedWithRegistration(state, this.userPhone.trim() );
-			case 'registered' : return await proceedWithProfile(state, this.userPhone.trim(), input);
-			default : return await proceedWithDefaultMessage(state, userData.data.phone);
+			case 'notRegistered' : response = await proceedWithRegistration(state, this.userPhone.trim() );
+			break;
+			case 'registered' : response = await proceedWithProfile(state, this.userPhone.trim(), input);
+			break;
+			default : response = await proceedWithDefaultMessage(state, userData.data.phone);
 		}
+
+		return response;
 
 	} catch(err) {
 		console.log(err);

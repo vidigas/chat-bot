@@ -31,9 +31,8 @@ npm run dev
 
 You have two optins to run this bot.
 
-One is runnig in dev mode to interact with the bot from the terminal window.
-
-The other is to run in api mode and consume through a post request.
+One is runnig in dev mode to interact with the bot from the terminal window and
+the other is to run in api mode and consume through a post request.
 
 ## Install
 ```bash
@@ -59,7 +58,7 @@ Send messages and receive responses based on the user state and chat context,
 
 ```bash
 
-METHOD POST http://localhost:8080/${user_phone} 
+METHOD POST http://localhost:8888/message/:user_phone
 
 REQUEST
 
@@ -84,6 +83,6 @@ body = {
 npm start
 ```
 
-Start making requests on http://localhost:8080/${user_phone}.
+Start making requests on http://localhost:8888/message/:user_phone.
 
 
