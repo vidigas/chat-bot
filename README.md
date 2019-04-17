@@ -50,9 +50,9 @@ Mostly for development purposes.
 npm run dev 
 ```
 
-## Run ( Api Endpoint )
+## Run Prod ( Api Endpoint )
 
-Create an endpoint for the Bot to be consumed.
+Create an endpoint for the Bot to be consumed on a POST request.
 
 Send messages and receive responses based on the user state and chat context,
 
