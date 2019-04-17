@@ -4,7 +4,7 @@ this awesome chatbot work as a microservice for a larger project.
 
 you will need to clone and run the api project as well
 
-![Alt text](Public/plantao-zap-chat-bot.jpg?raw=true "Fluxogram")
+![Alt text](/Public/plantao-zap-chat-bot.jpg?raw=true "Fluxogram")
 
 
 
