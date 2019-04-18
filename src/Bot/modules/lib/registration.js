@@ -8,7 +8,7 @@ export const proceedWithRegistration =  async (state ,phone) => {
 			const user = await updateUser(phone, {state:'idle',role:'student'});
 
 			// send welcome msg
-			return Vocabulary(state , phone);	
+            return rWrapper(VocabularyAlt.newUserGreeting(),'send',richMessage.context);
 	
 		} catch(err) {
 	

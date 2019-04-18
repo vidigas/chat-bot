@@ -12,7 +12,7 @@ export const Context = async (richMessage) => {
         case 'idle' : return await Module.proceedWithBeginService(richMessage);
         case 'profile' : return await Module.proceedWithProfile(richMessage);
         case 'asking' : return await askingQ(richMessage);
-        default : return await Module.proceedWithDefaultMessage(richMessage);
+        default : return await Module.proceedWithErrorContext(richMessage);
     }
 }
 
@@ -29,7 +29,7 @@ export const askingQ = async (richMessage) => {
         //confirm more info
         case 'waitMoreInfo' : return await routerAskingQ(context,input);
         //asked if wanted to send more info : awaiting answer;
-        default : return await proceedWithDefaultMessage(state, userData.data.phone);
+        default : return await Module.proceedWithErrorContext(richMessage);
     }
 }
 

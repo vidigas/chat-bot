@@ -27,6 +27,7 @@ app.post('/message/:phone', async (req, res) => {
 
 		if(!response){
 			
+			
 			var data = {	user: req.params.user , action: 'send',canal :'whatsapp' ,body: 'Desculpa, não escutei. Pode repetir. :)' }
 		 
 		  res.status(200).send(data)

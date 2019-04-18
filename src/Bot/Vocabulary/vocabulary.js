@@ -62,3 +62,7 @@ export const help = () => {
 	var msgBody = 'Aguarde que alguem entrará em contato!';
 	return msgBody;
 }
+export const error = () =>{
+    var msgBody = 'Desculpe, não entendemos. Pode repetir? Pode pedir ajuda com PRECISO DE AJUDA, tb.'
+    return msgBody;
+}
