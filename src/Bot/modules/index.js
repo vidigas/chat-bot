@@ -1,5 +1,6 @@
-import { proceedWithRegistration } from './lib/registration';
-import { proceedWithQuestion } from './lib/question';
-import { proceedWithProfile } from './lib/profile';
-
-export { proceedWithQuestion, proceedWithRegistration, proceedWithProfile };
+export { proceedWithRegistration } from './lib/registration';
+export { proceedWithQuestion } from './lib/question';
+export { proceedWithProfile } from './lib/profile';
+export { proceedWithBeginService } from './lib/beginService';
+export { proceedWithEndService } from './lib/endService';
+export { proceedWithHelpService } from './lib/helpService';

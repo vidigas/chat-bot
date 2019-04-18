@@ -1,7 +1,11 @@
 import { getUser } from './repositories/users.repository';
-import { proceedWithRegistration, proceedWithQuestion, proceedWithProfile } from './modules';
+import * as Router from './router/index';
+import { postMessage } from './repositories/messages.repository';
+import { postResponse } from './repositories/messages.repository';
 
 import color from 'colors';
+
+
 
 export default class Bot {
 	
@@ -19,18 +23,27 @@ export default class Bot {
 		var userData =  await getUser(this.userPhone.trim());
 
 		console.log(color.yellow('\n\n','User data : '), color.red(userData.data));
-		
-		const state = userData.data.state;
+		const context = userData.data;
+		const pMessage = {context : context, input:input}
+		//posta a mensagem rica para a API. (depois tem que mexer isso para deixar no estilo handler)
+		console.log(pMessage);
+		const post = await postMessage(pMessage);
+		//update a richmessage para conter o id da mensagem criada.
+		const richMessage = {context : context, input : post.data};
+		console.log(richMessage);
+		// cria o objeto resposta
+		var response;
 
-		var response ;
-
-		
-		// Verificar se é uma questão de ordem?
-
-
-		// Roteador Contexto (vale a pena )
-		const router = new Router(context,input);
-		Bot.Router(context,input)
+		// input filter
+		const filter = await Router.inputFilter(richMessage)
+		console.log('filter',filter)
+		if(filter.direction =='out'){
+			response =  filter.out;
+		} else{
+			response = await Router.Context(richMessage);
+		}
+		console.log(response)
+		const res_post = await postResponse(response);
 
 		return response;
 

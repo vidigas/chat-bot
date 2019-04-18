@@ -3,6 +3,8 @@ import express from 'express';
 import bodyParser from 'body-parser';
 
 // import { PORT } from './env.config';
+import  AccessControlMiddleware  from './middlewares/lib/AccessControlMiddleware';
+
 
 import Bot from './Bot';
 
@@ -13,11 +15,13 @@ const app = express();
 
 app.use(bodyParser.json());
 
+app.use(AccessControlMiddleware.allowAccess); //middleware para por headers (CORS)
+
 app.post('/message/:phone', async (req, res) => {
-	console.log('bateu aquiiiiii', console.log(req.params))
-
+	//req.params tá dando undefined, pq?
+	console.log('bateu aquiiiiii', console.log(req.params));
+	console.log('input',req.body.message);
 	const bot = new Bot(req.params.phone);
-
 	const response = await bot.processMessage(req.body.message);
 
 
