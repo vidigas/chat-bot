@@ -29,7 +29,6 @@ export default class Bot {
 
 		console.log(pMessage);	
 
-
 		const post = await postMessage(pMessage);	//posta a mensagem rica para a API. (depois tem que mexer isso para deixar no estilo handler)
 
 		var richMessage = {context : context, input : post.data};		//update a richmessage para conter o id da mensagem criada.
@@ -48,7 +47,7 @@ export default class Bot {
 		} 
 		else{
 
-			response = await Router.Context(richMessage);
+			response = await Router.Context(richMessage); //aqui vai entrar o script da programação visual
 		}
 		console.log(response)
 
