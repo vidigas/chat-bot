@@ -1,0 +1,279 @@
+﻿<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+<title></title>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="viewport" content="width=device-width, minimum-scale=1.0" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+  <link type="text/css" rel="stylesheet" href="./css/application.css" />
+
+  <script src="./lib/jquery.js"></script>
+  <script src="./lib/jquery-ui.js"></script>
+  <script src="./lib/jquery.browser.js"></script>
+
+  <script src="./lib/draw2d.js"></script>
+
+    <script src="./app/Application.js"></script>
+    <script src="./app/View.js"></script>
+    <script src="./app/Toolbar.js"></script>
+    <script src="./app/TableShape.js"></script>
+    <script src="./app/ModuleShape.js"></script>
+    <script src="./app/filePathShape.js"></script>
+
+    <script src="./app/CopyInterceptorPolicy.js"></script>
+
+	<style>
+	.draw2d_InputPort{
+	   fill:#F7F7F7;
+	   stroke:#d7d7d7;
+	}
+    .draw2d_OutputPort{
+       fill:#F7F7F7;
+       stroke:#d7d7d7;
+    }
+    #canvas {
+        width:100%;
+    }
+    .load-save{
+        display:flex;
+
+    }
+    #json-btn {
+        margin-left: 10%;;
+    }
+    #senna {
+        margin-left:0.5em;
+    }
+    pre{
+        overflow:auto;
+        position:absolute; 
+        top:-10px; 
+        right:10px; 
+        width:30%; 
+        height:100%;
+        background:white;
+        border:1px solid gray
+    }
+    </style>
+    
+  
+
+</head>
+
+<body id="container">
+
+   <div id="toolbar" class="navbar-default">
+    <div class='load-save'>
+        <button id='save-btn'>Download</button>
+        <input type="text" name="path" id="path">
+        <span>--</span>
+        <select id='attachment'>
+        </select>
+        <button id='load-btn'>Load</button>
+        <button id='json-btn' >Mostrar Json </button>
+        <button id='senna' >Mostrar chatTreejs </button>
+
+    </div>
+   </div>
+
+   <div id="side-nav" >
+     <span id="logo">chatTree</span>
+     <div id="layer_elements"></div>
+     <div id="layer_header" class="highlight panetitle blackgradient">
+            <div data-shape="TableShape"   class="palette_node_element draw2d_droppable" title="drag&amp;drop the table into the canvas..">Router</div>
+            <div data-shape="ModuleShape"   class="palette_node_element draw2d_droppable" title="drag&amp;drop the table into the canvas..">Module</div>
+            <div data-shape="scriptShape"   class="palette_node_element draw2d_droppable" title="drag&amp;drop the table into the canvas..">Script</div>
+            <div data-shape="filePathShape"   class="palette_node_element draw2d_droppable" title="drag&amp;drop the table into the canvas..">input</div>
+            <div data-shape="outputShape"   class="palette_node_element draw2d_droppable" title="drag&amp;drop the table into the canvas..">output</div>
+            <div data-shape="commentShape"   class="palette_node_element draw2d_droppable" title="drag&amp;drop the table into the canvas..">comment</div>
+
+     </div>
+   </div>
+
+   <div id="canvas" >
+   </div> 
+    <pre id="json"style='display:none;'>
+    </pre>
+    <pre id="chatTreeJs"style='display:none;'>
+        </pre>
+</body>
+<script type="text/javascript">
+
+    /**
+     * @method
+     * Factory method to provide a default connection for all drag&drop connections. You
+     * can override this method and customize this for your personal purpose.
+     *
+     * @param {draw2d.Port} sourcePort port of the source of the connection
+     * @param {draw2d.Port} targetPort port of the target of the connection
+     * @template
+     * @returns {draw2d.Connection}
+     */
+    
+     var canvas;
+     var routerToUse
+     var app;
+    document.addEventListener("DOMContentLoaded",function () {
+    
+        routerToUse =new draw2d.layout.connection.SplineConnectionRouter();
+        app  = new example.Application();
+        app.view.installEditPolicy(  new draw2d.policy.connection.DragConnectionCreatePolicy({
+            createConnection: function(){
+                var connection = new draw2d.Connection({
+                    stroke:3,
+                    outlineStroke:1,
+                    outlineColor:"#303030",
+                    color:"91B93E",
+                    router:routerToUse
+                });
+                return connection;
+            }
+        }));
+        //pan
+        app.view.installEditPolicy(new DblClickCanvasPolicy()); //ta declarado no view.js
+
+    
+        // unmarshal the JSON document into the canvas
+        // (load)
+        //var reader = new draw2d.io.json.Reader();
+        //reader.unmarshal(app.view, jsonDocument);
+
+        // display the JSON document in the preview DIV
+        //
+          displayJSON(app.view);
+          app.view.installEditPolicy(new draw2d.policy.canvas.PanningSelectionPolicy());
+          app.view.installEditPolicy(new CopyInterceptorPolicy());
+         // app.view.installEditPolicy(new draw2d.policy.canvas.BoundingboxSelectionPolicy());
+
+    
+    // add an event listener to the Canvas for change notifications.
+    // We just dump the current canvas document into the DIV
+    //
+    app.view.getCommandStack().addEventListener(function(e){
+        if(e.isPostChangeEvent()){
+            displayJSON(app.view);
+        }
+    });
+    
+    });
+    
+    //display json text
+
+    function displayJSON(canvas){
+        var writer = new draw2d.io.json.Writer();
+        writer.marshal(canvas,function(json){
+            $("#json").text(JSON.stringify(json, null, 2));
+        });
+    }
+
+
+    //handle versioning
+
+  function handleFileSelect(evt) {
+    var files = evt.target.files; // FileList object
+    console.log(files)
+    // files is a FileList of File objects. List some properties.
+    var output = [];
+    $('#path').val = escape(files.name);
+  }
+
+
+    function download(filename, text) {
+      var element = document.createElement('a');
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+      element.setAttribute('download', filename);
+    
+      element.style.display = 'none';
+      document.body.appendChild(element);
+    
+      element.click();
+    
+      document.body.removeChild(element);
+    }
+    
+    
+
+
+    //click events
+
+    $('#json-btn').click(function(){
+        $('#json').toggle('fast');
+    })
+    $('#senna').click(function(){
+        $('#chatTreeJs').toggle('fast');
+    })
+
+    $('#save-btn').click(function() {
+        displayJSON(app.view);
+        filename = $('#path').val();
+        text = $('#json').html();
+        $.ajax({
+            url: '/chatTree/'+filename,
+            method : "POST",
+            contentType:'text/plain',
+            dataType: "text/plain",
+            data: text,
+            success: function(data){console.log(data);alert(data);}
+        })
+    });
+    // Populate load options
+    var teste;
+    function loadSelect(){   
+        $.get('../chatTree/', function (data){
+            document.getElementById('attachment').innerHTML = '';
+            data.forEach(element => {
+            teste = data;
+            option = document.createElement('option');
+            option.setAttribute('value', element);
+            option.appendChild(document.createTextNode(element));
+            document.getElementById('attachment').appendChild(option);  
+            })
+        });
+    }
+    loadSelect();
+
+    var loadJsonDocument = {};
+    var script ='';
+    
+    $('#load-btn').click(function() {
+        var loadJsonDocument = {};
+        str = "loadJsonDocument = ";
+        filename = document.getElementById('attachment').value;
+        path = '../chatTree/'
+        path= path + filename;
+        //pega o json no treeRepo
+        $.getJSON(path,function( data ) {
+        loadJsonDocument = data;
+        //clear no app view
+        window.setTimeout(function (){
+        app.view.clear()
+        }, 300);
+        //trabalha o json
+        window.setTimeout(function (){
+        loadJsonDocument.forEach(element => {
+            if(element.ports){delete element.ports;}
+            if(element.vertex){delete element.vertex;}
+            if(element.routingMetaData){delete element.routingMetaData;}
+        });
+        }, 300);
+        //lê o json pra dentro do app.view
+        window.setTimeout(function (){
+        reader = new draw2d.io.json.Reader();
+        reader.unmarshal(app.view, loadJsonDocument);
+        }, 1000);
+        });
+        // display the JSON document in the preview DIV
+        //display
+          displayJSON(app.view);
+    });
+
+    
+    // NEW SHAPES    
+
+
+
+    </script>
+    
+
+
+</html>

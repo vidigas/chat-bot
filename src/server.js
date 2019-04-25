@@ -1,26 +1,23 @@
 
 import express from 'express';
 import bodyParser from 'body-parser';
-
 // import { PORT } from './env.config';
 import  AccessControlMiddleware  from './middlewares/lib/AccessControlMiddleware';
-
-
+//teste
 import Bot from './Bot';
+var fs = require('fs');
 
 
 const PORT = process.env.PORT || 8888;
 
 const app = express();
 
-app.use(bodyParser.json());
-
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser({limit: '50mb'}));
 app.use(AccessControlMiddleware.allowAccess); //middleware para por headers (CORS)
 
 app.post('/message/:phone', async (req, res) => {
-	//req.params tá dando undefined, pq?
-	console.log('bateu aquiiiiii', console.log(req.params));
-	console.log('input',req.body.message);
+
 	const bot = new Bot(req.params.phone);
 	const response = await bot.processMessage(req.body.message);
 
@@ -42,6 +39,33 @@ app.post('/message/:phone', async (req, res) => {
 
 	})
 
+
+	// PORTA DO CHAT UI
+	//depois colocar isso na estrutura use router handler
+	app.use('/chatUI',express.static(__dirname+'/Bot/ChatUI'));
+	// todo - colocar o post para criar arquivo e um get para pegar arquivo, tudo data json.
+	// OU. criar um mongodb para salvar esses dados json. Como é um arquivo que agente pode querer mexer manual, acho que vale a pena ser um arquivo.
+	var textParser = bodyParser.text({ type: 'text/plain',limit: "50mb", extended: true, parameterLimit:50000 });
+	app.post('/chatTree/:name', textParser,(req,res) =>{
+		fs.writeFile(__dirname+'/bot/ChatUI/treeRepo/'+req.params.name,req.body,function(err) {
+			if(err) {res.send('could not save file because ' + err)}
+			console.log("The file was saved!");}); 
+			res.send(req.params.name + ' file was saved');
+	});
+	app.get('/chatTree/:name', (req,res) =>{
+		fs.readFile(__dirname+'/bot/ChatUI/treeRepo/'+req.params.name, function (err, data) {
+			if (err) {res.send('file not found')};
+			res.send(data);
+		  });	
+	});
+	app.get('/chatTree/', (req,res) =>{
+		var data = [];
+		fs.readdirSync(__dirname+'/bot/ChatUI/treeRepo/').forEach(file => {
+		data.push(file);
+		  });
+		res.send(data);
+	});
+	// TERMINA PARTE DO UI
 
 		app.listen(PORT, err => {
 			if(err) {
