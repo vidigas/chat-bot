@@ -24,7 +24,6 @@ export default class Bot {
 		await wait(200);
 		this.trees.push = await buildChatTree(this.trees.push);
 		this.trees.profile = await buildChatTree(this.trees.profile);
-		return tree
 
 	}
 	catch (error){
