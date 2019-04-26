@@ -1,6 +1,6 @@
 function getQuote (user) {
 
-	var msgBody = 'hello NAME*, this is te default message';
+	var msgBody = 'hello NAME*, this is the default message';
 	
 
 	return msgBody.replace('NAME*', user);
