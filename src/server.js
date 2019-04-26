@@ -1,19 +1,16 @@
 
-import express from 'express';
-import bodyParser from 'body-parser';
-// import { PORT } from './env.config';
 import  AccessControlMiddleware  from './middlewares/lib/AccessControlMiddleware';
 
 import Bot from './Bot';
 var fs = require('fs');
 
-const bot = new Bot();
 
-bot.init().then(() => {
-});
+import express from "express";
+import bodyParser from "body-parser";
 
 
-const PORT = process.env.PORT || 8888;
+
+export default (bot) => {
 
 const app = express();
 
@@ -67,16 +64,20 @@ app.post('/message/:phone', async (req, res) => {
 		data.push(file);
 		  });
 		res.send(data);
-	});
+	});		
+
+
+
+ 
+
+ 	return app
+
+
+}
+
 	// TERMINA PARTE DO UI
 
-		app.listen(PORT, err => {
-			if(err) {
-				console.log(err);
-			} else {
-				console.log(`Server Running - Listening to port ${PORT}`);
-			}
-		})	
+
 
 
 

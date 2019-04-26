@@ -1,95 +1,28 @@
-import color from 'colors';
+import server from './server';
+import express from 'express';
+import bodyParser from 'body-parser';
+// import { PORT } from './env.config';
+import  AccessControlMiddleware  from './middlewares/lib/AccessControlMiddleware';
 
 import Bot from './Bot';
-import { log } from './Bot/helper';
+var fs = require('fs');
 
-//the class ChatInterface is used to develop the bot locally
+const bot = new Bot();
 
-//it will become a POST request that receives an user and a message and returns the answer
+bot.init();
 
-class ChatInterface {
-	constructor(user){
+var app = server(bot);
+				
+const PORT = process.env.PORT || 8888;
 
-		this.user = user.toString();
-
-	}
-
- 	async chat(output) {
- 		
- 		//output header
-		this.writeMessageHeader('Bot: ');
-
-	 	
-		//sleep
-	 	await new Promise(r => setTimeout(r, 1000))
-
- 		// write answer body
-	 	await this.speak(output);
-
-	 	//input header
-		this.writeMessageHeader('Me: ');
-
-
-	 	// listen for user input
-		this.listen();
-}
-
-	async speak(output) {
-
-		const stdout = process.stdout;
-		stdout.write(color.green(output +  '\n'));
-	}
-
-	async listen(){
-
-		const stdin = process.stdin;
-		stdin.resume();
-
-		await stdin.once('data', await this.callProcessMessage.bind(this));
-}
-
-	async callProcessMessage (input) {
-		input = input.toString().trim();
-
-		const bot = new Bot(this.user)
-
-		const response = await bot.processMessage(input);
-
-		if(!response) return this.chat('Desculpa, não escutei. Pode repetir. :)');
-
-		return this.chat(response.body);
-
-	}
-
-	writeMessageHeader(subject){
-		const stdout = process.stdout;
-
-		stdout.write(color.yellow('\n' + subject));
-	}
-
-}
+app.listen(PORT, err => {
+	if(err) {
+		console.log(err);
+	} else {
+			console.log(`Server Running - Listening to port ${PORT}`);
+		}
+})	
 
 
 
-(function init() {
-	const stdout = process.stdout;
-	const stdin = process.stdin;
-
-
-	stdout.write(color.red('\n\n\n' + 'Insira um número de celular para iniciar uma conversa' + '\n\n\n'));
-	stdin.resume();
-
-	 stdin.once('data', (user) => {
-
-		var app = new ChatInterface( user );
-
-	stdout.write(color.red('\n\n\n' + 'Inicializando chat . . . Comece a conversa' + '\n\n\n'));
-
-
-	app.writeMessageHeader('Me :');
-
-		return app.listen() });
-})()
 	
-
-

@@ -22,9 +22,9 @@ export class ChatTree{
     this.ready = false;
 }
     About(){
-        console.log('This is the ChatTree Object. It hold all the logic built for the chat tree  \n It has preparing methods, constructing with a json object from the chat tree UI . \n  after being constructed, it may add other objects with the AddObject method \n After declaration of all objects and logic, Build method garanteed the objects are up to date and prepared.\n Run takes (RichMessage) input and through Objects until it reaches a object that returns a wrapper response (with responseWrapper)  \n **FUTURE : BUILD A METHOD TO CONSTRUCT CHAT TREE WITHOUT JSON \n')
-        console.log(Object.getOwnPropertyNames(this));
-        console.log(this.objects);
+        // console.log('This is the ChatTree Object. It hold all the logic built for the chat tree  \n It has preparing methods, constructing with a json object from the chat tree UI . \n  after being constructed, it may add other objects with the AddObject method \n After declaration of all objects and logic, Build method garanteed the objects are up to date and prepared.\n Run takes (RichMessage) input and through Objects until it reaches a object that returns a wrapper response (with responseWrapper)  \n **FUTURE : BUILD A METHOD TO CONSTRUCT CHAT TREE WITHOUT JSON \n')
+        // console.log(Object.getOwnPropertyNames(this));
+        // console.log(this.objects);
       }
     Check(){
       var checklog = []
@@ -34,20 +34,20 @@ export class ChatTree{
       this.objects['moduleDefaultOutput']?checklog.push('no default module'):checklog.push('default module ok;')
       mapHasDuplicateName(this.find)?checklog.push('has duplicate Names!!'):checklog.push('No duplicate names, good thing!')
       checklog.push('Numero de objetos:' ,this.objects.length);
-      this.log(checklog);
+     // this.log(checklog);
       return checklog;
     }
     log(){
       var args = Array.from(arguments);
       switch (args.length){
         case 0:
-        this.logstack.forEach(log =>{console.log(log)});return this.logstack;break;
+        this.logstack.forEach(log =>{});return this.logstack;break;
         case 1:
         this.logstack.push(args[0]);break;
         default:
         var str = '';
         args.forEach(arg => {str += ',' + arg} );
-        this.logstack.push(str);break;
+        //this.logstack.push(str);break;
       }
     } 
 
@@ -62,16 +62,16 @@ export class ChatTree{
               if(this.ready==true){
                   var way = []; //cria o waystack
                   way.push(this.init);
-                  this.log('Initial Step added to way',way)
+                 // this.log('Initial Step added to way',way)
                   var next = this.objects[this.init]; //coloca a função inicial na var next
                   while(typeof next !== "undefined"){
                       way.push(next.run(inputObj));
-                      this.log('Step added to way ->', way );
+                    //  this.log('Step added to way ->', way );
                       next = this.objects[lastItem(way)]; //get last object
                   }
-                  this.log('run Succesful',way );
-                  this.log('run Succesful',this.arrayFind(way));
-                  console.log('run Succesful',this.arrayFind(way));
+                  // this.log('run Succesful',way );
+                  // this.log('run Succesful',this.arrayFind(way));
+                  //console.log('run Succesful',this.arrayFind(way));
               return way;
               } 
           } catch(err) {this.log('buildError',err);throw err}
@@ -85,10 +85,10 @@ export class ChatTree{
           }
           if(typeof(this.objects[this.init].run)=='function'){
               this.ready = true;
-              this.log('Successfully built ',this.name, 'Ready to go');
+            // this.log('Successfully built ',this.name, 'Ready to go');
           } else {
               this.ready=false;
-              this.log('Building ',this.name, 'has failed - init is not a function');
+            //  this.log('Building ',this.name, 'has failed - init is not a function');
               throw 'Building tree Failed - init is not a function'
           }
       }
@@ -102,12 +102,12 @@ export class ChatTree{
           } 
             this.find.set(obj.name,stack); //concatena em arrays os nomes duplicados
           //check for dup object name here?
-          this.log('Object Added:', obj.name);
+         // this.log('Object Added:', obj.name);
       }
       AddVocabulary(id,func){ // no futuro fazer essa funcao poder receber array
         if(typeof(func)=='function'){
           this.vocabulary[id]=func;
-          this.log('Vocabulary Added:', id);
+        //  this.log('Vocabulary Added:', id);
           } else {
             throw 'Vocabulary not function - err'
           }
@@ -127,7 +127,7 @@ export class ChatTree{
       var pholder;
   
       jsonref.forEach((obj,idx) => {
-        this.log('Parsing...',obj.type);
+      //  this.log('Parsing...',obj.type);
   
         if(hasAttr(obj,'text') && obj.text==='start'){
           this.init = connMap[obj.ports[0].name];
@@ -143,15 +143,15 @@ export class ChatTree{
         }  
   
         this.AddObject(pholder.id,pholder);
-        this.log(pholder.name,'built object sucessfully'); 
+      //  this.log(pholder.name,'built object sucessfully'); 
       })
   
-    this.log('JSON objects parsed sucessfully');
+  //  this.log('JSON objects parsed sucessfully');
     
     }
     parseModuleJson (obj,connMap){
       var connMap = connMap || this.jsonPortMap;
-      this.log('parsing module...', obj.name)
+    //  this.log('parsing module...', obj.name)
           var modul = new Module(obj); //pega as entidades
           modul.entities = obj.entities; // pega sa portas por id dela e nome da entidade que tá
           modul.portList = parsePorts(obj.ports);
@@ -172,7 +172,7 @@ export class ChatTree{
     parseRouter (obj,connMap,json){
       var connMap = connMap || this.jsonPortMap;
       var json = json || this.jsonref;
-      this.log('parsing router', obj.name);
+    //  this.log('parsing router', obj.name);
           //get names and id
           var route = new Router(obj);
           route.entities = obj.entities;
@@ -200,7 +200,7 @@ export class ChatTree{
                               caseInputs.push(getContentFromInput(json,route.portMapEnt.inputs[idx].objectConn)) //pega o input apartir da lista mestra
                               route.addCase(caseInputs,item.objectConn)
                           } else {
-                            console.log('chatTree.js 201',obj.name,item.name,item.objectConn);
+                           // console.log('chatTree.js 201',obj.name,item.name,item.objectConn);
                             route.addCase(item.name,item.objectConn)
                           }
                       }

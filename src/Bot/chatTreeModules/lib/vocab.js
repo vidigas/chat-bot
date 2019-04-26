@@ -18,7 +18,7 @@ export class Vocab{
     tudoBem = () => {
         var x = Math.random();
         var msgBody = '';
-        console.log(x)
+        // console.log(x)
         switch(true){
             case x<0.100:
                 msgBody = 'Tudo médio, na verdade. Passei a tarde inteira trabalhando, respondendo uma turma de alunos que na verdade só queriam bater papo. /n você vai querer perguntar algo? responda NOVA PERGUNTA';

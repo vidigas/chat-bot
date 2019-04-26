@@ -124,7 +124,7 @@ export function getContentFromInput(objects,objectId){ //has to deprecate in the
 export function rWrapper (text,action,newContext) {
     //console.log('rWrapper');
     //console.log(newContext,text,action);
-    console.log(typeof(text));
+    //console.log(typeof(text));
     if(typeof(text) != 'string'){text = text[0]} //pegar o caso do texto não ter passado por uma função.
     const response = {
         message: newContext._id,
@@ -202,7 +202,6 @@ function dispatchBuilder (condArray,outputArray,outputDefault) {
 
 export function routerBuilder (interpreter,condArray,outputArray,outputDefault,outputErr){
     try{
-        console.log(condArray,outputArray)
         var dispatcher = dispatchBuilder(condArray,outputArray,outputDefault)
         //console.log('chatTree',dispatcher);
             var router = (inputObj) =>{
@@ -211,7 +210,7 @@ export function routerBuilder (interpreter,condArray,outputArray,outputDefault,o
                 var interpreted_caso = interpreter(inputObj,condArray);
                 //console.log('chat tree', 'caso interpretado', interpreted_caso);
                 inputObj.context.interpret = interpreted_caso;
-                console.log('state',inputObj.context.interpret);
+               // console.log('state',inputObj.context.interpret);
                 var route = dispatcher(inputObj);
                 //console.log('chat tree',dispatcher);
                 //console.log('chat tree',route);

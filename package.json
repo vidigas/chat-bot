@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon --exec babel-node src/Bot/Vocabulary/vocabulary.js",
-    "start": "nodemon --exec babel-node src/server.js",
+    "dev": "nodemon --exec babel-node src/devIndex.js",
+    "start": "nodemon --exec babel-node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

@@ -2,38 +2,44 @@ import { getUser,postAction } from './repositories/users.repository';
 import { postMessage } from './repositories/messages.repository';
 import { postResponse } from './repositories/messages.repository';
 import { readFileSync, readFile } from 'fs';
-import { buildChatTree } from './buildChatTrees';
 //teste
 import color from 'colors';
-import { RunTree, init } from './buildChatTrees';
+// import { RunTree, init } from './buildChatTrees';
+import TreeComposer from '../TreeComposer';
 
-var wait = ms => new Promise((r, j)=>setTimeout(r, ms))
 
 export default class Bot {
 	
-	constructor(){
-		this.trees = {}
-	}
+constructor() {
+
+	this.trees = {};
+}
 
 	async init() { 
+		
+		var composeTree = new TreeComposer();
+		
+		await composeTree.init().then()
 
-	// const = ['push', 'profile'];
-	try {
-		this.trees['push'] =await JSON.parse(readFileSync(__dirname+'/ChatUI/treeRepo/push'));
-		this.trees['profile'] = await JSON.parse(readFileSync(__dirname+'/ChatUI/treeRepo/profile'));
-		await wait(200);
-		this.trees.push = await buildChatTree(this.trees.push);
-		this.trees.profile = await buildChatTree(this.trees.profile);
-		return tree
 
-	}
-	catch (error){
-		console.log(error)
-	}
-	
+		this.trees['push'] =  composeTree.getTree('push');
+		this.trees['profile'] =  composeTree.getTree('profile');
 }
-	async processMessage(userPhone,input){
 
+	async RunTree ( chatTree, richMessage){
+	
+		var way = await chatTree.Run(richMessage);
+		var response = way[way.length - 1];
+		if(!response.newTree) return response;
+
+
+		 way = await this.RunTree(this.trees[response.newTree],richMessage);
+		
+		return way;
+
+	}
+
+	async processMessage(userPhone,input){
 // primera etapa do processo - Pega o usuário.
 	try {
 
@@ -50,7 +56,7 @@ export default class Bot {
 
 //TODO: criar Rmessage numa classe ou func.
 		var richMessage = {context : context, input : post.data};		//update a richmessage para conter o id da mensagem criada.
-		var response = await RunTree(this.trees.push  ,richMessage);
+		var response = await this.RunTree(this.trees.push  ,richMessage);
 
 
 		const res_post = await postResponse(response);
