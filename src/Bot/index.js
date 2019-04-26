@@ -7,8 +7,6 @@ import { buildChatTree } from './buildChatTrees';
 import color from 'colors';
 import { RunTree, init } from './buildChatTrees';
 
-var wait = ms => new Promise((r, j)=>setTimeout(r, ms))
-
 export default class Bot {
 	
 	constructor(){
@@ -21,7 +19,6 @@ export default class Bot {
 	try {
 		this.trees['push'] =await JSON.parse(readFileSync(__dirname+'/ChatUI/treeRepo/push'));
 		this.trees['profile'] = await JSON.parse(readFileSync(__dirname+'/ChatUI/treeRepo/profile'));
-		await wait(200);
 		this.trees.push = await buildChatTree(this.trees.push);
 		this.trees.profile = await buildChatTree(this.trees.profile);
 
@@ -49,7 +46,7 @@ export default class Bot {
 
 //TODO: criar Rmessage numa classe ou func.
 		var richMessage = {context : context, input : post.data};		//update a richmessage para conter o id da mensagem criada.
-		var response = await RunTree(this.trees.push  ,richMessage);
+		var response = await RunTree(this.trees,this.trees.push,richMessage);
 
 
 		const res_post = await postResponse(response);

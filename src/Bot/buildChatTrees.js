@@ -1,9 +1,10 @@
-import { readFileSync, readFile } from 'fs';
 import { ChatTree, Interpret } from './chatTreeModules/';
 import { Vocab } from './chatTreeModules/lib/vocab';
 
 
-
+Array.prototype.last = function() {
+    return this[this.length - 1];
+}
 
 
 export const buildChatTree = async (json) => {
@@ -21,10 +22,10 @@ export const buildChatTree = async (json) => {
 	return chatTree;
 }
 
-export const RunTree = async (chatTree,richMessage) => {
+export const RunTree = async (trees,chatTree,richMessage) => {
 
 
-	way = await chatTree.Run(richMessage);
+	var way = await chatTree.Run(richMessage);
 	var response = way.last();
 	if(!response.newTree){
 
@@ -32,8 +33,8 @@ export const RunTree = async (chatTree,richMessage) => {
 
 	} else {
 		console.log('response newtree',response.newTree);
-		var way = await RunTree(trees[response.newTree],richMessage);
-		response=way.last();
+		var response = await RunTree(trees,trees[response.newTree],richMessage);
+		return response;
 	}
 }
 

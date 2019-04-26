@@ -12,7 +12,6 @@ const bot = new Bot();
 bot.init().then(() => {
 });
 
-
 const PORT = process.env.PORT || 8888;
 
 const app = express();
