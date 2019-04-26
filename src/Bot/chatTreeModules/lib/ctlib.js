@@ -122,9 +122,6 @@ export function getContentFromInput(objects,objectId){ //has to deprecate in the
     };
 }
 export function rWrapper (text,action,newContext) {
-    //console.log('rWrapper');
-    //console.log(newContext,text,action);
-    console.log(typeof(text));
     if(typeof(text) != 'string'){text = text[0]} //pegar o caso do texto não ter passado por uma função.
     const response = {
         message: newContext._id,
@@ -134,7 +131,6 @@ export function rWrapper (text,action,newContext) {
         state: newContext.state,
         confirm: 'false'
     }
-    //console.log(response);
     return response;
 }
 function action2Obj(actionInput){
@@ -143,7 +139,6 @@ function action2Obj(actionInput){
              let action ={};
              let item2 = item.split('=')
              action.action=item2[0];
-             //console.log(item2[1]);
              action.obj = eval('action.obj = '+ item2[1]) || 'empty';
              actions[idx]=action;
          });
@@ -202,24 +197,15 @@ function dispatchBuilder (condArray,outputArray,outputDefault) {
 
 export function routerBuilder (interpreter,condArray,outputArray,outputDefault,outputErr){
     try{
-        console.log(condArray,outputArray)
         var dispatcher = dispatchBuilder(condArray,outputArray,outputDefault)
-        //console.log('chatTree',dispatcher);
             var router = (inputObj) =>{
                 try{
-                //console.log(interpreter,condArray,outputArray,outputErr);
                 var interpreted_caso = interpreter(inputObj,condArray);
-                //console.log('chat tree', 'caso interpretado', interpreted_caso);
                 inputObj.context.interpret = interpreted_caso;
-                console.log('state',inputObj.context.interpret);
                 var route = dispatcher(inputObj);
-                //console.log('chat tree',dispatcher);
-                //console.log('chat tree',route);
                 return route;
-                // erro para debug depois tem que tirar o catch e por o outputerr
                 } catch(err){
                     console.log('outputErr Coming...')
-                    console.log(outputErr);
                     return [err,outputErr];
                 }
             }
@@ -229,7 +215,6 @@ export function routerBuilder (interpreter,condArray,outputArray,outputDefault,o
     }
 }
 export function moduleBuilder(action,vocab,outputDefault,outputErr){
-    //console.log(action,vocab,outputDefault,outputErr);
     try{
         var modul = (inputObj) =>{
             try{
@@ -240,7 +225,6 @@ export function moduleBuilder(action,vocab,outputDefault,outputErr){
             var response = rWrapper(vocab,action,inputObj.context)
             return response;
         }catch(err){
-          console.log(err);
             return outputErr;
         }
     }

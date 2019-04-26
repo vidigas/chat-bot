@@ -177,7 +177,6 @@ export class ChatTree{
           var route = new Router(obj);
           route.entities = obj.entities;
           // pega sa portas por id dela e nome da entidade que tá
-          //console.log('chatTree 180',obj.ports);
           route.portList = parsePorts(obj.ports);
           route.portMap = portMap(route.portList,connMap);
           route.portMapEnt = portMapEntities(route.portMap,route.entities);
@@ -200,7 +199,6 @@ export class ChatTree{
                               caseInputs.push(getContentFromInput(json,route.portMapEnt.inputs[idx].objectConn)) //pega o input apartir da lista mestra
                               route.addCase(caseInputs,item.objectConn)
                           } else {
-                            console.log('chatTree.js 201',obj.name,item.name,item.objectConn);
                             route.addCase(item.name,item.objectConn)
                           }
                       }
