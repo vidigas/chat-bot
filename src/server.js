@@ -3,9 +3,14 @@ import express from 'express';
 import bodyParser from 'body-parser';
 // import { PORT } from './env.config';
 import  AccessControlMiddleware  from './middlewares/lib/AccessControlMiddleware';
-//teste
+
 import Bot from './Bot';
 var fs = require('fs');
+
+const bot = new Bot();
+
+bot.init().then(() => {
+});
 
 
 const PORT = process.env.PORT || 8888;
@@ -17,9 +22,7 @@ app.use(bodyParser({limit: '50mb'}));
 app.use(AccessControlMiddleware.allowAccess); //middleware para por headers (CORS)
 
 app.post('/message/:phone', async (req, res) => {
-
-	const bot = new Bot(req.params.phone);
-	const response = await bot.processMessage(req.body.message);
+	const response = await bot.processMessage(req.params.phone,req.body.message);
 
 
 		if(!response){

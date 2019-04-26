@@ -66,3 +66,4 @@ export const error = () =>{
     var msgBody = 'Desculpe, não entendemos. Pode repetir? Pode pedir ajuda com PRECISO DE AJUDA, tb.'
     return msgBody;
 }
+
