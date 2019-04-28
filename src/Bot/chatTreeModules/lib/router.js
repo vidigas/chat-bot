@@ -1,4 +1,6 @@
 import {CreateUUID,routerBuilder} from './ctlib';
+import {Logger} from '../../helper/'
+
 
 
 export class Router{
@@ -16,26 +18,26 @@ export class Router{
 
     }
     addCase(caso,output){
-        //check if case alredy exists here
         this.caseArray.push(caso);
         this.outputArray.push(output)
     }
     Build(objectlist){
-        // console.log(this.name);
-        // console.log('interpreter:',this.interpreter);
         try{
-            // console.log('try',this.interpreter);
+
             this.interpreter = objectlist[this.interpreter].name //pega o nome 
         }catch{
-            // console.log('catchou',this.interpreter);
+
+            Logger('--warning : interpreter' + this.interpreter+ ' not found; going default')
+
             this.interpreter = 'defaultInterpreter';
         }
-        // console.log('out',this.interpreter);
+
         if(this.interpreter=='undefined'){this.interpreter = 'defaultInterpreter';}
-        // console.log('posdefault',this.interpreter);
-        this.interpreter = objectlist[this.interpreter]; 
-        // console.log('interpreterfuncao',this.interpreter);
-        // console.log(this.condArray,this.outputArray)
-        this.run = routerBuilder(this.interpreter,this.caseArray,this.outputArray,this.default,this.err)
+        
+        this.interpreterFunction = this.parent.interpreterLib[this.interpreter]; 
+        
+        this.run = routerBuilder(this.interpreterFunction,this.caseArray,this.outputArray,this.default,this.err)
+        
+        if(typeof this.run =='function') console.log(this.name,' Router Built');
     }
 }

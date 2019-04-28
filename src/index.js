@@ -1,8 +1,4 @@
 import server from './server';
-import express from 'express';
-import bodyParser from 'body-parser';
-// import { PORT } from './env.config';
-import  AccessControlMiddleware  from './middlewares/lib/AccessControlMiddleware';
 
 import Bot from './Bot';
 var fs = require('fs');

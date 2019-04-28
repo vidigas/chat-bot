@@ -35,6 +35,35 @@ outputShape = draw2d.shape.note.PostIt.extend({
         var output= this.createPort("input");
         output.setName("input_"+this.id);
         this.addPort(output);
+
+        this.on("contextmenu", function(emitter, event){
+            console.log(emitter);
+            $.contextMenu({
+                selector: 'body', 
+                events:
+                {  
+                    hide:function(){ $.contextMenu( 'destroy' ); }
+                },
+                callback: $.proxy(function(key, options) 
+                {
+                   switch(key){
+                   case "goto":
+                       setTimeout(function(){
+                        window.open(emitter.text, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+                       },10);
+                       break;
+                   }
+                
+                },this),
+                x:event.x,
+                y:event.y,
+                items: 
+                {
+                    "goto": {name: "Go to"},
+                }
+            });
+        });
+
     },
     getPersistentAttributes : function()
     {

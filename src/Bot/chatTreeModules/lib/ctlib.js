@@ -1,3 +1,4 @@
+import {Logger} from '../../helper/'
 
 export function CreateUUID() {
     // http://www.ietf.org/rfc/rfc4122.txt
@@ -107,7 +108,6 @@ export function findWithAttr(array, attr, value) {
     }
     return -1;
 }
-
 //
 
 export function getContentFromInput(objects,objectId){ //has to deprecate in the future
@@ -122,9 +122,6 @@ export function getContentFromInput(objects,objectId){ //has to deprecate in the
     };
 }
 export function rWrapper (text,action,newContext) {
-    //console.log('rWrapper');
-    //console.log(newContext,text,action);
-    //console.log(typeof(text));
     if(typeof(text) != 'string'){text = text[0]} //pegar o caso do texto não ter passado por uma função.
     const response = {
         message: newContext._id,
@@ -134,20 +131,22 @@ export function rWrapper (text,action,newContext) {
         state: newContext.state,
         confirm: 'false'
     }
-    //console.log(response);
     return response;
 }
 function action2Obj(actionInput){
+    console.log(typeof actionInput);
     var actions={};
-         actionInput.forEach((item,idx) => {
-             let action ={};
-             let item2 = item.split('=')
-             action.action=item2[0];
-             //console.log(item2[1]);
-             action.obj = eval('action.obj = '+ item2[1]) || 'empty';
-             actions[idx]=action;
-         });
-         return actions
+    if(typeof actionInput == 'object'){
+        actionInput.forEach((item,idx) => {
+            let action ={};
+            let item2 = item.split('=')
+            action.action=item2[0];
+            action.obj = eval('action.obj = '+ item2[1]) || 'empty';
+            actions[idx]=action;
+        });
+        return actions
+    }
+    else return actions;
  } 
 
 // buildFunctions.Js
@@ -161,6 +160,7 @@ function dispatchBuilder (condArray,outputArray,outputDefault) {
     if(condArray.length!=Object.keys(outputArray).length){
         return { 'err' : 'Objects not matching'};
     }
+    Logger(condArray)
     var redirect ={}
     //index to map output array
     var idx=0;
@@ -203,32 +203,25 @@ function dispatchBuilder (condArray,outputArray,outputDefault) {
 export function routerBuilder (interpreter,condArray,outputArray,outputDefault,outputErr){
     try{
         var dispatcher = dispatchBuilder(condArray,outputArray,outputDefault)
-        //console.log('chatTree',dispatcher);
             var router = (inputObj) =>{
                 try{
-                //console.log(interpreter,condArray,outputArray,outputErr);
-                var interpreted_caso = interpreter(inputObj,condArray);
-                //console.log('chat tree', 'caso interpretado', interpreted_caso);
-                inputObj.context.interpret = interpreted_caso;
-               // console.log('state',inputObj.context.interpret);
-                var route = dispatcher(inputObj);
-                //console.log('chat tree',dispatcher);
-                //console.log('chat tree',route);
-                return route;
-                // erro para debug depois tem que tirar o catch e por o outputerr
+                    if(typeof interpreter !='function'){Logger('ERROR: Interpreter not a function');console.log('interpreter :', interpreter)}
+                    var interpreted_caso = interpreter(inputObj,condArray);
+                    inputObj.context.interpret = interpreted_caso;
+                    var route = dispatcher(inputObj);
+                    return route;
                 } catch(err){
                     console.log('outputErr Coming...')
                     console.log(outputErr);
-                    return [err,outputErr];
+                    return [outputErr];
                 }
             }
         return router;
     } catch (build_err){
-        return build_err;
+        throw build_err;
     }
 }
 export function moduleBuilder(action,vocab,outputDefault,outputErr){
-    //console.log(action,vocab,outputDefault,outputErr);
     try{
         var modul = (inputObj) =>{
             try{
@@ -245,6 +238,6 @@ export function moduleBuilder(action,vocab,outputDefault,outputErr){
     }
     return modul;
 } catch (build_err){
-        return build_err;
+        throw build_err;
     }
 }

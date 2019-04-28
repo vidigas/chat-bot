@@ -1,14 +1,10 @@
 
 import  AccessControlMiddleware  from './middlewares/lib/AccessControlMiddleware';
-
-import Bot from './Bot';
 var fs = require('fs');
-
+var path = require('path');
 
 import express from "express";
 import bodyParser from "body-parser";
-
-
 
 export default (bot) => {
 
@@ -42,36 +38,34 @@ app.post('/message/:phone', async (req, res) => {
 
 	// PORTA DO CHAT UI
 	//depois colocar isso na estrutura use router handler
-	app.use('/chatUI',express.static(__dirname+'/Bot/ChatUI'));
-	// todo - colocar o post para criar arquivo e um get para pegar arquivo, tudo data json.
+	app.use('/chatUI',express.static(__dirname+'/chatUI'));
 	// OU. criar um mongodb para salvar esses dados json. Como é um arquivo que agente pode querer mexer manual, acho que vale a pena ser um arquivo.
 	var textParser = bodyParser.text({ type: 'text/plain',limit: "50mb", extended: true, parameterLimit:50000 });
 	app.post('/chatTree/:name', textParser,(req,res) =>{
-		fs.writeFile(__dirname+'/bot/ChatUI/treeRepo/'+req.params.name,req.body,function(err) {
+		fs.writeFile(__dirname+'/chatUI/treeRepo/'+req.params.name,req.body,function(err) {
 			if(err) {res.send('could not save file because ' + err)}
 			console.log("The file was saved!");}); 
 			res.send(req.params.name + ' file was saved');
 	});
 	app.get('/chatTree/:name', (req,res) =>{
-		fs.readFile(__dirname+'/bot/ChatUI/treeRepo/'+req.params.name, function (err, data) {
+		fs.readFile(__dirname+'/chatUI/treeRepo/'+req.params.name, function (err, data) {
 			if (err) {res.send('file not found')};
 			res.send(data);
 		  });	
 	});
 	app.get('/chatTree/', (req,res) =>{
 		var data = [];
-		fs.readdirSync(__dirname+'/bot/ChatUI/treeRepo/').forEach(file => {
+		fs.readdirSync(__dirname+'/chatUI/treeRepo/').forEach(file => {
 		data.push(file);
 		  });
 		res.send(data);
-	});		
+	});	
 
-
-
- 
+	app.use('/',(req,res)=>{
+		res.sendFile(path.resolve(__dirname+'/testchat.html'))
+	})
 
  	return app
-
 
 }
 

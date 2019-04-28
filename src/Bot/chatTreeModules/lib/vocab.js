@@ -1,3 +1,7 @@
+
+//mesma coisa que o interpreter, pensar em como modularizar e como guardar esses caras em um objeto json
+//fazer um padrão de replace geral que pega quando tá escrito direto
+
 export class Vocab{
     constructor(){     
     }
@@ -31,6 +35,12 @@ export class Vocab{
         }
         return msgBody;
     }
+    startMenu = ()=>{
+        return 'Você pode fazer uma PERGUNTA, FALAR conosco ou consultar seu SALDO'
+    }
+    questionRegistered =  ()=>{
+        return 'Pergunta Registrada!'
+    }
     aboutUs = () => {
         var msgBody = 'Vidigal é doidão';
         return msgBody;
@@ -52,7 +62,11 @@ export class Vocab{
         var msgBody = 'Aguarde que alguem entrará em contato!';
         return msgBody;
     }
-    error = () =>{
+    errResponse = () =>{
+        var msgBody = 'Ocorreu um erro. Pode repetir? Pode pedir ajuda com PRECISO DE AJUDA, tb.'
+        return msgBody;
+    }
+    defaultResponse = () =>{
         var msgBody = 'Desculpe, não entendemos. Pode repetir? Pode pedir ajuda com PRECISO DE AJUDA, tb.'
         return msgBody;
     }

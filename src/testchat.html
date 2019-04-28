@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Plantao Zap Test Front</title>
+    <script src="https://code.jquery.com/jquery-3.4.0.js" integrity="sha256-DYZMCC8HTC+QDr5QNaIcfR7VSPtcISykd+6eSmBW5qo=" crossorigin="anonymous"></script>
+
+    <style>
+        *{
+            box-sizing: border-box;
+
+        }
+        body{
+            padding: 1em;
+            background-color: #f4511e;
+        }
+        .log-screen{
+            display:flex;
+            flex-direction:row;
+            width:50%;
+            max-width:500px;
+            margin: 0 auto;
+            padding:2em;
+            justify-content: space-around;
+            background-color:white;
+        }
+        .chat-input{
+            display:flex;
+            flex-direction:row;
+            width:50%;
+            max-width:500px;
+            margin: 0 auto;
+            background-color:white;
+        }
+        .chat-input textarea{
+            margin: 0px;
+            height: 100%;
+            width: 100%;
+            border: none;
+            border-radius: 15px;
+            padding: 0.5em;
+            resize: none;
+            font-size:12pt;
+        }
+        input{
+            border-radius:5px;
+            font-size:12pt;
+            border:1px solid #f4511e;
+            margin:10px;
+            padding:10px 5px;
+            font-weight:bold;
+            color:black;
+        }
+
+        #chat{
+            display:flex;
+            flex-direction: column;
+            width:50%;
+            max-width:500px;
+            margin: 0 auto;
+            padding:4em;
+            background-color:white;
+            align-items: flex-start;
+            margin-top:1em;
+            margin-bottom:1em;
+            height:65vh;
+            overflow-y:scroll;
+        }
+
+        .msg{
+            display:flex;
+            flex-direction: column;
+            align-items: flex-start;
+
+            width: 70%;
+            border-radius: 15px;
+            margin-bottom: 1em;
+            padding: 1em;
+            box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+        }
+        .msg.bot{
+            background-color:rgb(255, 255, 255);
+            align-self:flex-start;
+        }
+        .msg.user{
+            background-color:rgba(244, 81, 30,0.3);
+            align-self: flex-end;
+        }
+        .name.bot{
+            background-color:rgb(255, 255, 255);
+            align-self:flex-start;
+        }
+        .name.user{
+            background-color:rgba(244, 81, 30,0.3);
+            align-self: flex-end;
+        }
+        .name{
+            background-color: rgba(0,0,0,0.05);
+            border-radius: 5px;
+            margin-bottom: 0.3em;
+            padding: 0.3em;
+            box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+            font-size:13pt;
+
+        }
+
+        .text{
+            padding:0.2em;
+            font-size:11pt;
+        }
+    
+        .date{
+            align-self:flex-end;
+            font-size:8pt;
+            font-weight:50
+        }
+
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+        }
+
+        button {
+            background-color: #f4511e;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 16px;
+            margin: 4px 2px;
+            opacity: 0.6;
+            transition: 0.3s;
+            display: inline-block;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        button:hover {opacity: 1}
+    
+    </style>
+
+
+</head>
+<body>
+    <div class='log-screen'>
+    <input type="text" name="userId" id="userId" placeholder="Telefone">
+    <button id='log-on'>LogOn</button>
+    <button id='log-off'>LogOff</button>
+    </div>
+    <div id = 'chat-window' style='display:none'>
+        <div id='chat'></div>
+        <div class='chat-input'>
+        <textarea name="postChat" id="postChat" rows="5" cols="33" placeholder="Escreva sua mensagem..."></textarea>
+        <button id='post-btn'>Postar</button>
+        </div>
+    </div>
+
+
+</body>
+
+<script>
+//controla o user id
+userId = '';
+//pega as mensagens da API e imprime (em ordem reversa às da API)
+my_messages = {};
+
+// jquery de logon. Tenta logar, se não não estiver vazio, executa o fetchuser na API
+// fetchUser devolve no console se o usuario é registrado ou não. Se sim, ele excuta o fetchChat;
+// fetchChat vai na base de dados, no endpoint messages/:phone e pega todo o histórico de mensagens desse telefone e coloca no innerhtml do div#chat
+// post chat manda um post para o endpoint /messages com o body { phone, text} e em seguida executa um fetch chat para atualizar.
+
+
+// a fazer
+// mandar para a base de dados informações de data.
+// construir a possivbilidade de ser uma mensagem recebida desse numero ou enviada à esse número, para construir o chat
+// monitorar o contexto que essa mensagem recebeu e imprimir no log.
+
+
+$( "#log-on" ).click(function() {
+  
+  if(logUser()!= 'erro'){fetchUser(userId);$("#chat-window").show();}
+});
+
+$( "#log-off" ).click(function() {
+  clearChat();
+  $("#chat-window").hide();
+  document.getElementById('userId').value = '';
+});
+
+$( "#post-btn" ).click(function() {
+  msgInput = document.getElementById('postChat').value;
+  if(msgInput!=""){ //filtra mensagens vazias
+    if(logUser()!= 'erro'){postChat(userId,msgInput)}; //checa se está logado
+    document.getElementById('postChat').value = '';
+    }
+});
+
+$("#postChat").keypress(function (e) {
+    if(e.which == 13 && !e.shiftKey) {        
+        $("#post-btn").trigger('click');
+        e.preventDefault();
+        return false;
+    }
+});
+
+$("#userId").keypress(function (e) {
+    if(e.which == 13) {        
+        $("#log-on").trigger('click');
+        $('#postChat').focus();
+        e.preventDefault();
+        return false;
+    }
+});
+
+function logUser(){
+    if(document.getElementById('userId').value != ''){ //filtra log vazio
+        userId = document.getElementById('userId').value;
+        console.log('Conectado com',userId);
+        return userId;
+    } else {
+        userId= '';
+        console.log('Inserir um usuário');
+        return 'erro';
+    }
+}
+
+function clearChat(){
+    document.getElementById('chat').innerHTML= '';
+}
+
+//ta mandando um get para saber se o usuario existe. Se não existir, tem que fazer o servidor já criar um usuario não cadastrado pra ele.
+function fetchUser(userId){
+    let fetchURL = 'http://localhost:8080/users/'+userId;
+    fetch(fetchURL, {
+        method: 'GET',
+        mode: 'cors', // pode ser cors ou basic(default)  
+        headers: new Headers({'Content-Type': 'application/json'})
+        })  
+        .then((resp) => resp.json()) // Transform the data into json
+        .then(function(data) {
+            console.log(data);
+            if(!data.phone){
+                console.log('usuario nao registrado - resolver na api')
+                clearChat();
+            } else {
+            fetchChat(data.phone);
+            }
+         })
+        }
+
+function fetchChat(userId){
+    let fetchURL = 'http://localhost:8080/messages/'+userId;
+    fetch(fetchURL, {
+        method: 'GET',
+        mode: 'cors', // pode ser cors ou basic(default)  
+        headers: new Headers({'Content-Type': 'application/json'})
+        })  
+        .then((resp) => resp.json()) // Transform the data into json
+        .then(function(data) {
+            console.log(data);
+                htmlString = '<br/>';
+                my_messages = data;
+                my_messages.forEach(message => {
+                teste = new Date(message.datetime)
+                if(!message.confirm){
+                    htmlString = htmlString  +'<div class="name user"> 🙍 ' +message.phone +'</div>' + '<div class="msg user">'+'<div class="text user">' + message.text +'</div><div class="date">'+ dataFormat(teste) +'</div></div>';
+                } else{
+                    htmlString = htmlString  + '<div class="name bot">	&#x1F4D6 Plantão Zap</div>' + '<div class="msg bot">'+'<div class="text bot">'+ message.text+ '</div><div class="date">' + dataFormat(teste) +'</div></div>';
+                }
+                });
+                
+                document.getElementById('chat').innerHTML= htmlString;
+                $('#chat').stop().animate({scrollTop: $('#chat')[0].scrollHeight}, 200);
+        });
+}
+
+function postChat(userId,message){
+    let fetchURL = 'http://localhost:8888/message/'+userId;
+    fetch(fetchURL, {
+        method: 'POST',
+        mode: 'cors', // pode ser cors ou basic(default)  
+        body: JSON.stringify({'message':message}),
+        headers: new Headers({'Content-Type': 'application/json'})
+        })  
+        .then((resp) => resp.json()) // Transform the data into json
+        .then(function(data) {
+            console.log(data);
+            fetchChat(userId);
+        });
+}
+
+//funcoes de formatação de data
+function dataFormat(data){
+        dia  = data.getDate().toString().padStart(2, '0'),
+        mes  = (data.getMonth()+1).toString().padStart(2, '0'), //+1 pois no getMonth Janeiro começa com zero.
+        ano  = data.getFullYear();
+        h = addZero(data.getHours());
+        m = addZero(data.getMinutes());
+        s = addZero(data.getSeconds());
+    return dia + "/" + mes + "/" + ano + ' ' + h + ":" + m + ":" + s;
+}
+
+function addZero(i) {
+  if (i < 10) {
+    i = "0" + i;
+  }
+  return i;
+}
+
+</script>
+</html>
