@@ -18,7 +18,7 @@ constructor() {
 
 	async init() { 
 		
-		var composeTree = new TreeComposer(['push','profile','testeteste']);
+		var composeTree = new TreeComposer(['push','profile','testeteste','respostaProf']);
 		await composeTree.init().then()
 		this.trees = composeTree.trees;
 }
@@ -30,7 +30,6 @@ constructor() {
 			// roda o grupo de respostas, se não for newtree, devolve o grupo, se alguma delas for newtree, aprofunda
 			// e substitui a propria resposta newtree com a resposta que vier de lá
 			else{response[i] = await this.RunTree(this.trees[response[i].newTree],richMessage);}}
-			console.log(response);
 			response = flattenArray(response); //desfaz os nested arrays para garantir uma lista de respostas
 			return response;
 	}
@@ -54,13 +53,11 @@ constructor() {
 		var richMessage = {context : context, input : post.data};		//update a richmessage para conter o id da mensagem criada.
 		var responses = await this.RunTree(this.trees.push  ,richMessage);
 		// gambiarra - se responses nao é array, transforma em array de 1
-		console.log(responses);
 		for(var i=0;i<responses.length;i++){
-			console.log(responses[i].text)
 		const res_post = await postResponse(responses[i]);
 		const res_action = await postAction(responses[i]);
 		}
-		return responses[0];
+		return responses[0]; //retornando só uma resposta.
 
 	} catch(err) {
 

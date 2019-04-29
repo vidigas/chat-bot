@@ -16,16 +16,7 @@ function scoreFromTokens(tokens,cas){
     var scores = tokens.map((token) => natural.JaroWinklerDistance(cas,token, undefined, true));
     return Math.max(...scores);
 }
-//flatten array
-// function flattenArray(arrayObj){
-//     var holder = [];
-//     arrayObj.forEach(item => {
-//         if(Array.isArray(item)){ holder2 = flattenArray(item);} 
-//         else var holder2= item;
-//         holder = holder.concat(holder2);
-//     }); 
-//     return holder;
-// }
+
 export function searchNegation(sentence){
     var searchArray = ['não','nao','nem','nada'];
     var result = decideBestMatch(sentence,searchArray,false,0.95)

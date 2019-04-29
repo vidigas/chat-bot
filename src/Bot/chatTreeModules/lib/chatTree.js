@@ -35,7 +35,7 @@ export class ChatTree{
         if(this.ready==false){this.Build();}
         if(this.ready==true){
           var way =this.FollowRoutes(this.init,inputObj);
-          way = this.arrayFind(way) //desativar se der bug callstack pq ta dando bug no defaultoutput
+          //way = this.arrayFind(way) //desativar se der bug callstack pq ta dando bug no defaultoutput
           Logger('run Succesful');
           var response = way.filter((item)=>{return (typeof item)=='object'})
           return response; //response is an array of 1 or more items
