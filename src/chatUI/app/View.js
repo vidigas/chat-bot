@@ -55,6 +55,11 @@ example.View = draw2d.Canvas.extend({
             figure.setName("ModuleName");
         }else if(type=='commentShape'){
             var figure = eval("new "+type+"();");
+        } else if(type=='SpreaderShape'){
+            var figure = eval("new "+type+"();");
+            figure.addEntity("inputObj");
+            figure.addEntity("out1");
+            figure.addEntity("out2");
         }
         
         // create a command for the undo/redo support

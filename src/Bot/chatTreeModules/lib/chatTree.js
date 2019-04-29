@@ -5,6 +5,7 @@ import {TextInput} from './textInput';
 import {Output} from './output';
 import {Script} from './script';
 import {Router} from './router';
+import {Spreader} from './spreader';
 import {Module} from './module';
 import {Vocab} from './vocab';
 import {Interpret} from './interpret';
@@ -25,6 +26,7 @@ export class ChatTree{
     this.runcount = 0;
     this.ready = false;
   }
+
   Run(inputObj){
     this.runcount += 1;
     this.log('Starting run...',this.runcount);
@@ -32,19 +34,29 @@ export class ChatTree{
       try{
         if(this.ready==false){this.Build();}
         if(this.ready==true){
-          var way = []; //cria o waystack
-          way.push(this.init);
-          var next = this.objects[this.init]; //coloca a função inicial na var next
-          while(typeof next !== "undefined"){
-            way.push(next.run(inputObj));
-            next = this.objects[lastItem(way)]; //get last object
-          }
-          console.log('run Succesful',this.arrayFind(way));
-          return way;
+          var way =this.FollowRoutes(this.init,inputObj);
+          way = this.arrayFind(way) //desativar se der bug callstack pq ta dando bug no defaultoutput
+          Logger('run Succesful');
+          var response = way.filter((item)=>{return (typeof item)=='object'})
+          return response; //response is an array of 1 or more items
         } 
       } catch(err) {this.log('run Error',err);throw err}
   }
 
+  FollowRoutes(nextWay,inputObj){
+    var way;
+    if(!Array.isArray(nextWay)) {way = [nextWay]}
+    else {way = nextWay.slice(0)} //garantir que é um array e dá pra usar foreach
+    way.forEach((bifurc) => {
+      var nextObj = this.objects[bifurc];
+      if(typeof nextObj != 'undefined'){
+        var bifurc = nextObj.run(inputObj);
+        var placeholder = this.FollowRoutes(bifurc,inputObj);
+        way.pushArray(placeholder);
+      }
+    });
+    return way
+  }
   // builds all objects that have build function. Finds object in init and check if its build and it's method "run" is a function // If ok, returns buildOk
   Build(){
     for (var key in this.objects) {
@@ -109,6 +121,7 @@ export class ChatTree{
         case 'ScriptShape': pholder = new Script(obj); break;
         case 'ModuleShape': pholder = this.parseModuleJson(obj,connMap); break;
         case 'outputShape': pholder = new Output(obj);break;
+        case 'SpreaderShape':pholder = this.parseSpreader(obj);break;
         default:
       }  
       this.AddObject(pholder.id,pholder);
@@ -171,7 +184,26 @@ export class ChatTree{
     });
     return route;
     }
-      
+    parseSpreader (obj,connMap,json){
+      var connMap = connMap || this.jsonPortMap;
+      var json = json || this.jsonref;
+      var spreader = new Spreader(obj);
+      spreader.entities = obj.entities; // pega sa portas por id dela e nome da entidade que tá
+      spreader.portList = parsePorts(obj.ports);
+      spreader.portMap = portMap(spreader.portList,connMap);
+      spreader.portMapEnt = portMapEntities(spreader.portMap,spreader.entities);
+      spreader.portMapEnt.inputs.forEach((item,idx) => {
+        switch(item.name){
+          case 'inputObj':spreader.inputObj = item.objectConn; break;                // input obj do nothing
+        }
+      });
+      spreader.portMapEnt.outputs.forEach((item,idx) => {
+        if(item.objectConn){ //se tem conexão entra
+          spreader.addOutput(item.objectConn)
+        }
+      });
+      return spreader;
+      }  
 //parse all conections and make a port - object map
   parseConnectionMap(json) {
     var connectionMap = [];
@@ -217,7 +249,13 @@ log(){
     }
   } 
   arrayFind(way){
-      var names =way.map((item)=>{return this.find.get(item) || item});
+    // TODO : KNOWN-BUG -> DEFAULT TÁ DANDO PROBLEMA QUI
+    var names = way.map((item)=>{return this.find.get(item) || item});
+      for(var i = 0;i < names.length;i++){
+      if(Array.isArray(names[i])){
+          names[i] = this.arrayFind(names[i]);
+        }
+      }
       return names;
   }
   getObject(name){

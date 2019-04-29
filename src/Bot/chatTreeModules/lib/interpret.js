@@ -1,5 +1,6 @@
 import {decideBestMatch,searchNegation} from './nlp'
 import {isEmail} from './rgxCheck'
+import { Logger } from '../../helper';
 
 
 //estou pensando que isso aqui deve virar duas coisas:

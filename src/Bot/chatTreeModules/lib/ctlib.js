@@ -134,7 +134,6 @@ export function rWrapper (text,action,newContext) {
     return response;
 }
 function action2Obj(actionInput){
-    console.log(typeof actionInput);
     var actions={};
     if(typeof actionInput == 'object'){
         actionInput.forEach((item,idx) => {
@@ -160,7 +159,7 @@ function dispatchBuilder (condArray,outputArray,outputDefault) {
     if(condArray.length!=Object.keys(outputArray).length){
         return { 'err' : 'Objects not matching'};
     }
-    Logger(condArray)
+    Logger(condArray);
     var redirect ={}
     //index to map output array
     var idx=0;
@@ -240,4 +239,21 @@ export function moduleBuilder(action,vocab,outputDefault,outputErr){
 } catch (build_err){
         throw build_err;
     }
+}
+export function spreaderBuilder(outputArray){
+    var run = (inputObj) =>{
+        var newOutArray = outputArray.slice(0); //está clonando
+        // se nao clonar, ele passa o array como referencia e usa ele como waystack.
+        return newOutArray;
+    }
+    return run;
+}
+export function flattenArray(arrayObj){
+    var holder = [];
+    arrayObj.forEach(item => {
+        if(Array.isArray(item)){ holder2 = flattenArray(item);} 
+        else var holder2= item;
+        holder = holder.concat(holder2);
+    }); 
+    return holder;
 }
